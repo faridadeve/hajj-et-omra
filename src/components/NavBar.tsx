@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const NavBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,24 +16,28 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
                  ${isScrolled ? "glass-effect py-2" : "bg-transparent py-4"}`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <a href="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
             <span className="text-secondary font-bold text-xl">AS</span>
           </div>
           <span className="text-secondary font-bold text-xl">Al-Safar</span>
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center space-x-8">
-          <NavLink href="#services">Nos Services</NavLink>
-          <NavLink href="#hajj">Hajj</NavLink>
-          <NavLink href="#omra">Omra</NavLink>
-          <NavLink href="#contact">Contact</NavLink>
+          <NavLink to="/" active={isActive("/")}>Accueil</NavLink>
+          <NavLink to="/offres" active={isActive("/offres")}>Nos Offres</NavLink>
+          <NavLink to="/a-propos" active={isActive("/a-propos")}>À Propos</NavLink>
+          <NavLink to="/reservation" active={isActive("/reservation")}>Réservation</NavLink>
+          <NavLink to="/informations" active={isActive("/informations")}>Informations</NavLink>
+          <NavLink to="/contact" active={isActive("/contact")}>Contact</NavLink>
         </div>
 
         <button
@@ -46,16 +52,22 @@ const NavBar = () => {
       {isMenuOpen && (
         <div className="md:hidden glass-effect">
           <div className="flex flex-col space-y-4 px-4 py-6">
-            <MobileNavLink href="#services" onClick={() => setIsMenuOpen(false)}>
-              Nos Services
+            <MobileNavLink to="/" onClick={() => setIsMenuOpen(false)} active={isActive("/")}>
+              Accueil
             </MobileNavLink>
-            <MobileNavLink href="#hajj" onClick={() => setIsMenuOpen(false)}>
-              Hajj
+            <MobileNavLink to="/offres" onClick={() => setIsMenuOpen(false)} active={isActive("/offres")}>
+              Nos Offres
             </MobileNavLink>
-            <MobileNavLink href="#omra" onClick={() => setIsMenuOpen(false)}>
-              Omra
+            <MobileNavLink to="/a-propos" onClick={() => setIsMenuOpen(false)} active={isActive("/a-propos")}>
+              À Propos
             </MobileNavLink>
-            <MobileNavLink href="#contact" onClick={() => setIsMenuOpen(false)}>
+            <MobileNavLink to="/reservation" onClick={() => setIsMenuOpen(false)} active={isActive("/reservation")}>
+              Réservation
+            </MobileNavLink>
+            <MobileNavLink to="/informations" onClick={() => setIsMenuOpen(false)} active={isActive("/informations")}>
+              Informations
+            </MobileNavLink>
+            <MobileNavLink to="/contact" onClick={() => setIsMenuOpen(false)} active={isActive("/contact")}>
               Contact
             </MobileNavLink>
           </div>
@@ -65,31 +77,37 @@ const NavBar = () => {
   );
 };
 
-const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <a
-    href={href}
-    className="text-secondary hover:text-primary transition-colors duration-300"
+const NavLink = ({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) => (
+  <Link
+    to={to}
+    className={`${
+      active ? "text-primary" : "text-secondary"
+    } hover:text-primary transition-colors duration-300`}
   >
     {children}
-  </a>
+  </Link>
 );
 
 const MobileNavLink = ({
-  href,
+  to,
   onClick,
+  active,
   children,
 }: {
-  href: string;
+  to: string;
   onClick: () => void;
+  active: boolean;
   children: React.ReactNode;
 }) => (
-  <a
-    href={href}
+  <Link
+    to={to}
     onClick={onClick}
-    className="text-secondary hover:text-primary transition-colors duration-300 py-2"
+    className={`${
+      active ? "text-primary" : "text-secondary"
+    } hover:text-primary transition-colors duration-300 py-2`}
   >
     {children}
-  </a>
+  </Link>
 );
 
 export default NavBar;
